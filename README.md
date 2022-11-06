@@ -21,7 +21,7 @@ Locate the repo and run:
 Simulations are run via the "main" file. This is also where simulations are configured, including e.g., designing traffic scenarios and setting up the optimal controllers.
 
  ## Project Structure
-
+The projects contains the following files.
 ```bash
 .
 ├── controllers.py
