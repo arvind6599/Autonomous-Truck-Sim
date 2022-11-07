@@ -16,8 +16,8 @@ directory = r"C:\Phd\Student_Projects\GNN_RL_EPFL\Autonomous-Truck-Sim\simRes.gi
 
 # System initialization 
 dt = 0.2                    # Simulation time step (Impacts traffic model accuracy)
-f_controller = 4            # Controller update frequency, i.e updates at each t = dt*f_controller
-N =  13                     # MPC Horizon length
+f_controller = 5            # Controller update frequency, i.e updates at each t = dt*f_controller
+N =  12                     # MPC Horizon length
 
 ref_vx = 60/3.6             # Higway speed limit in (m/s)
 
@@ -114,7 +114,7 @@ decisionMaster.setDecisionCost(q_ADV_decision)                  # Sets cost of c
 # # -----------------------------------------------------------------
 # # -----------------------------------------------------------------
 
-tsim = 100                         # Total simulation time in seconds
+tsim = 200                         # Total simulation time in seconds
 Nsim = int(tsim/dt)
 tspan = np.linspace(0,tsim,Nsim)
 
@@ -199,6 +199,6 @@ i_crit = i
 
 # Creates animation of traffic scenario
 
-borvePictures(X,X_traffic,X_traffic_ref,vehList,X_pred,vehicleADV,scenarioADV,traffic,i_crit,f_controller,directory)
+# borvePictures(X,X_traffic,X_traffic_ref,vehList,X_pred,vehicleADV,scenarioADV,traffic,i_crit,f_controller,directory)
 
 features2CSV(feature_map,Nveh,Nsim)
