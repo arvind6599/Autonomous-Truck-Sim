@@ -1,5 +1,5 @@
 # Autonomous Truck Simulator
-Author: Erik Börve, erik.borve@volvo.com  
+Author: Erik Börve, borerik@chalmers.se  
 
  ## Purpose
  This project provides an implementation of an autonomous truck in a multi-lane highway scenario. The controller utilizes non linear optimal control to compute and optimze over a set of feasible paths.
