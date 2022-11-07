@@ -42,15 +42,25 @@ The projects contains the following files.
 
  ### controllers.py
  makeController:
- Generates Model predictive controller based on specified scenario
+ Generates optimal controller based on specified scenario.
  
  decisionMaster:
  Optimizes the trajectory choice, returns optimal policy.
  ### helpers.py
- Contains assisting functions, e.g., for data extraction and plotting
+ Contains assisting functions, e.g., for data extraction and plotting.
  ### main.py
- ### requirements.txt
+ Running and setting up simulations.
+ 
  ### scenarios.py
+ Formulates constraints for the different scenarios considered in the optimal controllers.
+ 
  ### templateRLagent.py
+ Template class for communicating with the lower level controllers.
+ 
  ### traffic.py
+ Combined traffic: Used to communicate with all vehicles in traffic scenario.
+ 
+ vehicleSUMO: Creates a vehicle. with specified starting position, velocity and class.
+ 
  ### vehicleModelGarage.py
+ Contains different truck models that can be utilized in the simulaation.
