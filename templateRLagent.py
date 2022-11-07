@@ -28,7 +28,7 @@ class RLAgent:
         self.decision = float('nan')
 
     def fetchVehicleFeatures(self,features):
-        # Fetches the most recent vehicle features 
+        # Fetches the most recent vehicle features, automatically refreshes each simulation step
         self.vehicleFeatures = features[:,0:]
 
     def getDecision(self):
