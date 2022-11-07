@@ -15,16 +15,15 @@ General
 Data is provided in a (N_x,Nveh*N_sim) matrix
  - Splitting this into (N_x,Nveh,N_sim) tensor seems suitable
 
-N_x  = 5  (Number of vehicle features)
-Nveh = 5 (Number of vehicles in simulation)
-N_sim = 1000 (Number of samples in time)
-dt_sim = 0.2 (Simulation time steps (sec))
-dt_ctrl = 1 (Controler decision time steps (sec) )
-
 class encoding: [0,1,2,3] = [truck,passive,normal,aggressive]
 
-Vehicle features
-----------------
 Data is provided in a minimal state representation
 x = [x-position,y-position,x-velocity,steering angle,class]
 
+This dataset
+--------------
+N_x  = 5  (Number of vehicle features)
+Nveh = 6 (Number of vehicles in simulation)
+N_sim = 1000 (Number of samples in time)
+dt_sim = 0.2 (Simulation time steps (sec))
+dt_ctrl = 1 (Controler decision time steps (sec) )

@@ -70,7 +70,6 @@ advVeh5 = vehicleSUMO(dt,N,[40,laneCenters[2]],[1.2*vx_ref_init,0],type = "aggre
 vehList = [advVeh1,advVeh2,advVeh3,advVeh4,advVeh5]
 
 # # Define traffic object
-N_pred = N #* f_controller
 leadWidth, leadLength = advVeh1.getSize()
 traffic = combinedTraffic(vehList,vehicleADV,N,f_controller)
 traffic.setScenario(scenarioADV)
