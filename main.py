@@ -11,7 +11,8 @@ from helpers import *
 
 from templateRLagent import RLAgent
 
-# Set save location for gif
+# Set Gif-generation
+makeMovie = True
 directory = r"C:\Phd\Student_Projects\GNN_RL_EPFL\Autonomous-Truck-Sim\simRes.gif"
 
 # System initialization 
@@ -198,6 +199,8 @@ i_crit = i
 
 # Creates animation of traffic scenario
 
-# borvePictures(X,X_traffic,X_traffic_ref,vehList,X_pred,vehicleADV,scenarioADV,traffic,i_crit,f_controller,directory)
+
+if makeMovie:
+    borvePictures(X,X_traffic,X_traffic_ref,vehList,X_pred,vehicleADV,scenarioADV,traffic,i_crit,f_controller,directory)
 
 features2CSV(feature_map,Nveh,Nsim)
