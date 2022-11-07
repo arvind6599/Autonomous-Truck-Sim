@@ -30,7 +30,6 @@ The projects contains the following files.
 ├── Data_example
     └── ex1.csv
     └── metaData_ex1.txt
-    └── metaData_general.txt
 ├── gitignore
 ├── helpers.py
 ├── main.py
