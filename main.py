@@ -12,12 +12,12 @@ from helpers import *
 from templateRLagent import RLAgent
 
 # Set save location for gif
-directory = r"C:\Phd\Student_Projects\GNN_RL_EPFL\autonomous_truck_simulator\simRes.gif"
+directory = r"C:\Phd\Student_Projects\GNN_RL_EPFL\Autonomous-Truck-Sim\simRes.gif"
 
 # System initialization 
-dt = 0.1                    # Simulation time step  *Note: changing this might effect traffic model performance*
-f_controller = 5            # Controller update frequency, i.e updates at each t = dt*f_controller
-N =  10                 # MPC Horizon length
+dt = 0.2                    # Simulation time step (Impacts traffic model accuracy)
+f_controller = 4            # Controller update frequency, i.e updates at each t = dt*f_controller
+N =  13                     # MPC Horizon length
 
 ref_vx = 60/3.6             # Higway speed limit in (m/s)
 
@@ -39,7 +39,7 @@ F_x_ADV  = vehicleADV.getIntegrator()
 # Set Cost parameters
 Q_ADV = [0,40,3e2,5,5]                            # State cost, Entries in diagonal matrix
 R_ADV = [5,5]                                    # Input cost, Entries in diagonal matrix
-q_ADV_decision = 100
+q_ADV_decision = 50
 
 vehicleADV.cost(Q_ADV,R_ADV)
 vehicleADV.costf(Q_ADV)
@@ -58,24 +58,20 @@ vehicleADV.setInit([0,laneCenters[0]],vx_init_ego)
 
 # # Initilize surrounding traffic
 # Lanes [0,1,2] = [Middle,left,right]
-vx_ref_init = 55/3.6                     # (m/s)
-advVeh1 = vehicleSUMO(dt,N,[-10,laneCenters[1]],[1.1*vx_ref_init,0],type = "aggressive")
-advVeh2 = vehicleSUMO(dt,N,[65,laneCenters[0]],[0.85*vx_ref_init,0],type = "passive")
-advVeh3 = vehicleSUMO(dt,N,[-25,laneCenters[2]],[1.2*vx_ref_init,0],type = "normal")
-advVeh4 = vehicleSUMO(dt,N,[50,laneCenters[1]],[0.85*vx_ref_init,0],type = "passive")
-advVeh5 = vehicleSUMO(dt,N,[-50,laneCenters[0]],[0.85*vx_ref_init,0],type = "passive")
-advVeh6 = vehicleSUMO(dt,N,[0,laneCenters[2]],[1*vx_ref_init,0],type = "normal")
-advVeh7 = vehicleSUMO(dt,N,[90,laneCenters[2]],[0.8*vx_ref_init,0],type = "normal")
-testVeh1 = vehicleSUMO(dt,N,[90,laneCenters[1]],[0.8*vx_ref_init,0],type = "passive")
-testVeh2 = vehicleSUMO(dt,N,[60,laneCenters[1]],[1.1*vx_ref_init,0],type = "aggressive")
+vx_ref_init = 50/3.6                     # (m/s)
+advVeh1 = vehicleSUMO(dt,N,[30,laneCenters[1]],[0.9*vx_ref_init,0],type = "normal")
+advVeh2 = vehicleSUMO(dt,N,[45,laneCenters[0]],[0.8*vx_ref_init,0],type = "passive")
+advVeh3 = vehicleSUMO(dt,N,[100,laneCenters[2]],[0.85*vx_ref_init,0],type = "normal")
+advVeh4 = vehicleSUMO(dt,N,[-20,laneCenters[1]],[1.2*vx_ref_init,0],type = "aggressive")
+advVeh5 = vehicleSUMO(dt,N,[40,laneCenters[2]],[1.2*vx_ref_init,0],type = "aggressive")
+
 
 # # Combine choosen vehicles in list
-# vehList = [advVeh1,advVeh2,advVeh4,advVeh5,advVeh6,advVeh7]
-vehList = [testVeh1,testVeh2]
+vehList = [advVeh1,advVeh2,advVeh3,advVeh4,advVeh5]
 
 # # Define traffic object
 N_pred = N #* f_controller
-leadWidth, leadLength = testVeh1.getSize()
+leadWidth, leadLength = advVeh1.getSize()
 traffic = combinedTraffic(vehList,vehicleADV,N,f_controller)
 traffic.setScenario(scenarioADV)
 Nveh = traffic.getDim()
@@ -90,19 +86,18 @@ dt_MPC = dt*f_controller
 opts1 = {"version" : "leftChange", "solver": "ipopt", "integrator":"rk"}
 MPC1 = makeController(vehicleADV,traffic,scenarioADV,N,opts1,dt_MPC)
 MPC1.setController()
-MPC1.testSolver(traffic)
+# MPC1.testSolver(traffic)
 changeLeft = MPC1.getFunction()
 
 opts2 = {"version" : "rightChange", "solver": "ipopt", "integrator":"rk"}
 MPC2 = makeController(vehicleADV,traffic,scenarioADV,N,opts2,dt_MPC)
 MPC2.setController()
-MPC2.testSolver(traffic)
+# MPC2.testSolver(traffic)
 changeRight = MPC2.getFunction()
 
 opts3 = {"version" : "trailing", "solver": "ipopt", "integrator":"rk"}
 MPC3 = makeController(vehicleADV,traffic,scenarioTrailADV,N,opts3,dt_MPC)
 MPC3.setController()
-# MPC3.testSolver(traffic)
 trailLead = MPC3.getFunction()
 
 print("Initilization succesful.")
@@ -119,7 +114,7 @@ decisionMaster.setDecisionCost(q_ADV_decision)                  # Sets cost of c
 # # -----------------------------------------------------------------
 # # -----------------------------------------------------------------
 
-tsim = 5                         # Total simulation time in seconds
+tsim = 100                         # Total simulation time in seconds
 Nsim = int(tsim/dt)
 tspan = np.linspace(0,tsim,Nsim)
 
@@ -153,8 +148,15 @@ X_traffic_ref = np.zeros((4,Nsim,Nveh))
 X_traffic[:,0,:] = traffic.getStates()
 testPred = traffic.prediction()
 
+feature_map = np.zeros((5,Nsim,Nveh+1))
+
 # # Simulation loop
 for i in range(0,Nsim):
+    # Update feature map for RL agent
+    feature_map_i = createFeatureMatrix(vehicleADV,traffic)
+    feature_map[:,i:] = feature_map_i
+    RL_Agent.fetchVehicleFeatures(feature_map_i)
+
     # Get current traffic state
     x_lead[:,:] = traffic.prediction()[0,:,:].transpose()
     traffic_state[:2,:,] = traffic.prediction()[:2,:,:]
@@ -186,15 +188,17 @@ for i in range(0,Nsim):
     X_traffic_ref[:,i,:] = traffic.getReference()
 
 print("Simulation finished")
-print("MPC Error count: ", decisionMaster.getErrorCount())
 
 i_crit = i
 
 # -----------------------------------------------------------------
 # -----------------------------------------------------------------
-#                           Plotting
+#                    Plotting and data extraction
 # -----------------------------------------------------------------
 # -----------------------------------------------------------------
 
 # Creates animation of traffic scenario
+
 borvePictures(X,X_traffic,X_traffic_ref,vehList,X_pred,vehicleADV,scenarioADV,traffic,i_crit,f_controller,directory)
+
+features2CSV(feature_map,Nveh,Nsim)

@@ -310,8 +310,6 @@ class makeDecisionMaster:
         cond1 = (x_pred_new[0,0]) < (self.x_pred[0,0] - self.tol)
         cond2 = ((x_pred_new[1,0] - x_pred_new[1,1]) > 1)
         if  (cond1 or cond2) and (self.consecutiveErrors < self.N-1):
-            print('Stange Solution!')
-            print('Using last ok result ...')
             self.consecutiveErrors += 1
             self.errors += 1
             return self.x_pred[:,self.consecutiveErrors], self.u_pred[:,self.consecutiveErrors], self.x_pred
@@ -398,8 +396,6 @@ class makeDecisionMaster:
 
         for i in range(3):
             costTotal[i] = self.costDecision(i) + costMPC[i] + self.costRouteGoal(i)
-        # print("                : [Left,right,Trail]")
-        # print("Controller costs:", costTotal)
         return np.argmin(costTotal)
 
     def updateReference(self):
@@ -449,7 +445,6 @@ class makeDecisionMaster:
         """
         Centers the x-position around 0 (to fix nummerical issues)
         """
-
         # Store current values of changes
         self.egoPx = self.x_iter[0]
         # Alter initialization of MPC
@@ -459,6 +454,7 @@ class makeDecisionMaster:
             self.x_lead[i,:] = self.x_lead[i,:] - self.egoPx
         
         self.traffic_state[0,:,:] = self.traffic_state[0,:,:] - self.egoPx
+        self.traffic_state[0,:,:] = np.clip(self.traffic_state[0,:,:],-600,600)
 
     def returnDeviation(self,X,U):
         """

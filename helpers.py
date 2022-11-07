@@ -5,12 +5,34 @@ from matplotlib.animation import FuncAnimation
 import matplotlib.animation as animation
 from matplotlib.patches import Rectangle
 import numpy as np
+import pandas as pd
 
 """
-    Additional helper functions
+    Additional helper functions for:
      - Plotting 
+     - Data extraction
      - Controllers
 """
+
+def createFeatureMatrix(truck,traffic):
+    Nveh = traffic.getDim()
+    features = np.zeros((5,1,Nveh+1))
+    trafficFeatures = traffic.getFeatures()
+    truckState = truck.getState()[:-1]
+    truckFeatures = np.array([np.append(truckState,np.array([[0]]))]).T
+    featureMap = np.append(truckFeatures,trafficFeatures,axis = 1)
+    features[:,0,:] = featureMap
+    return features
+
+def features2CSV(X,Nveh,Nsim):
+    # Creates data file with features from simulation
+    Nvehp1 = Nveh + 1
+    X_2D = np.zeros((5,Nvehp1*Nsim))
+    for i in range(Nsim):
+        X_2D[:,i*Nvehp1:(i+1)*Nvehp1] = np.round(X[:,i,:],5)
+    
+    DF = pd.DataFrame(X_2D)
+    DF.to_csv('simData.csv',index=False,header=False)
 
 def tanh(x):
     return (exp(x)-exp(-x)) / (exp(x)+exp(-x))
@@ -28,6 +50,7 @@ def rotmatrix(L,xy,ang):
     return x_new,y_new
 
 def borvePictures(X,X_traffic,X_traffic_ref,vehList,X_pred,vehicle,scenario,traffic,i_crit,f_c,directory):
+    print("Generating gif ...")
     Nveh = traffic.getDim()
     vehWidth, vehLength,_,_ = vehicle.getSize()
     roadMin, roadMax, laneCenters = scenario.getRoad()
@@ -120,5 +143,5 @@ def borvePictures(X,X_traffic,X_traffic_ref,vehList,X_pred,vehicle,scenario,traf
 
     writergif = animation.PillowWriter(fps=30) 
     anime.save(directory, writer=writergif)
-
+    print("Finished.")
     plt.show()

@@ -6,7 +6,7 @@ class combinedTraffic:
     """
     Methods for all vehicles in the current scenario
     """
-    def __init__(self,vehicles,egoVehicle,N,f_controller, respawnTol = 70, respawnPos = 100):
+    def __init__(self,vehicles,egoVehicle,N,f_controller, respawnTol = 75, respawnPos = 120):
         self.vehicles = vehicles
         self.egoVehicle = egoVehicle
         self.Nveh = len(vehicles)
@@ -50,6 +50,12 @@ class combinedTraffic:
         for i in range(self.Nveh):
             states[:,i] = np.squeeze(self.vehicles[i].getState())
         return states
+
+    def getFeatures(self):
+        features = np.zeros((self.nx+1,self.Nveh))
+        for i in range(self.Nveh):
+            features[:,i] = np.squeeze(self.vehicles[i].getFeatures())
+        return features
 
     def getReference(self):
         reference = np.zeros((4,self.Nveh))
@@ -126,6 +132,7 @@ class vehicleSUMO:
 
         # Set model parameters
         if type == "passive":
+            self.typeEncoding = 1
             self.IDM_s0 = 5
             self.IDM_T  = 2.5
             self.IDM_amax = 0.5
@@ -146,6 +153,7 @@ class vehicleSUMO:
             self.truck_respect_v = 5
 
         elif type == "normal":
+            self.typeEncoding = 2
             self.IDM_s0 = 3
             self.IDM_T  = 2
             self.IDM_amax = 0.7
@@ -166,6 +174,7 @@ class vehicleSUMO:
             self.truck_respect_v = 3
 
         elif type == "aggressive":
+            self.typeEncoding = 3
             self.IDM_s0 = 2
             self.IDM_T  = 1.5
             self.IDM_amax = 1
@@ -449,6 +458,10 @@ class vehicleSUMO:
     def getState(self):
         # Returns current state of the vehicle
         return np.array(np.append(np.append(self.p,self.v),self.theta)).transpose()
+
+    def getFeatures(self):
+        # Returns current state of the vehicle
+        return np.array(np.append(np.append(np.append(self.p,self.v),self.theta),self.typeEncoding)).transpose()
 
     def getReference(self):
         return np.array(np.append(self.nearP,self.farP)).T

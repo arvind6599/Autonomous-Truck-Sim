@@ -1,5 +1,4 @@
 casadi
 numpy
 matplotlib
-scipy
 pandas
