@@ -27,6 +27,10 @@ The projects contains the following files.
 ```bash
 .
 ├── controllers.py
+├── Data_example
+    └── ex1.csv
+    └── metaData_ex1.txt
+    └── metaData_general.txt
 ├── gitignore
 ├── helpers.py
 ├── main.py
