@@ -2,7 +2,7 @@
 Author: Erik Börve, borerik@chalmers.se  
 
  ## Purpose
- This project provides an implementation of an autonomous truck in a multi-lane highway scenario. The controller utilizes non linear optimal control to compute and optimze over a set of feasible paths.
+ This project provides an implementation of an autonomous truck in a multi-lane highway scenario. The controller utilizes non linear optimal control to compute multiple feasible trajectories, of which the most cost-efficent is choosen.
  
  ![](https://github.com/BorveErik/Autonomous-Truck-Sim/blob/main/simRes.gif)
 
