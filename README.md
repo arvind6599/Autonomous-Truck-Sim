@@ -63,7 +63,7 @@ The projects contains the following files.
  ### traffic.py
  Combined traffic: Used to communicate with all vehicles in traffic scenario.
  
- vehicleSUMO: Creates a vehicle. with specified starting position, velocity and class.
+ vehicleSUMO: Creates a vehicle with specified starting position, velocity and class.
  
  ### vehicleModelGarage.py
- Contains different truck models that can be utilized in the simulaation.
+ Contains truck models that can be utilized in the simulation.
