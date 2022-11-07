@@ -39,7 +39,12 @@ The projects contains the following files.
 ```
 
  ### controllers.py
+ makeController:
+ Generates Model predictive controller based on specified scenario
+ decisionMaster:
+ Optimizes the trajectory choice, returns optimal policy.
  ### helpers.py
+ Contains assisting functions, e.g., for data extraction and plotting
  ### main.py
  ### requirements.txt
  ### scenarios.py
